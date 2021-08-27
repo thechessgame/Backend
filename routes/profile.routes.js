@@ -30,6 +30,11 @@ router.patch(
     validationMiddleware(schemas.blogEditName),
     userControler.editName);
 
+router.get(
+    '/email',
+    isAuth,
+    userControler.fetchEmail);
+
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 
 export default router;
