@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 
 import userRoutes from "./routes/user.routes.js";
+import profileRoutes from "./routes/profile.routes.js";
 import playRoutes from "./routes/play.routes.js";
 import contactUsRoutes from "./routes/contactus.routes.js";
 import QandARoutes from "./routes/qanda.routes.js";
@@ -20,7 +21,7 @@ const app = express();
 middlewaresConfig(app);
 
 app.use('/user', userRoutes);
-app.use('/profile', userRoutes);
+app.use('/profile', profileRoutes);
 app.use('/play', playRoutes);
 app.use('/contactus', contactUsRoutes);
 app.use('/qa', QandARoutes);
