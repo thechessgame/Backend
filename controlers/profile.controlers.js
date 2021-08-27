@@ -59,7 +59,7 @@ export const editEmailOtpRequest = async (req, res, next) => {
         }
         const user = await User.findOne({ userName });
         const otp = Math.floor(1000 + Math.random() * 9000);
-        let userOtpData = await Otp.findOne({ email});
+        let userOtpData = await Otp.findOne({ email });
         if (userOtpData) {
             Object.assign(userOtpData, { userName: user.userName, email, password: user.password, otp: hashSync(otp) })
         }
@@ -68,11 +68,32 @@ export const editEmailOtpRequest = async (req, res, next) => {
         }
         await sendMail(email, 'OTP', emailHtml.otp(otp));
         await userOtpData.save();
-        res.success(`mail send`, null, `OTP send on your new email!`);
+        res.success(`mail send`, { otpId: userOtpData._id.toString() }, `OTP send on your new email!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Please try again later!`);
     }
 }
+
+export const editEmailConfirmOtp = async (req, res, next) => {
+    const { otpId, otp } = req.body;
+    try {
+        const userOtpData = await Otp.findById(otpId.toString());
+        if (!userOtpData) {
+            return res.warning("No request found", null, "No request found");
+        }
+        if (userOtpData.updatedAt.getTime() + (3 * 60 * 1000) < new Date()) {
+            return res.warning(`Otp has been exipired!`, null, `Otp has been exipired!`)
+        }
+        if (!compareSync(otp, userOtpData.otp)) {
+            return res.unauthorizedUser("Incorrect Otp");
+        }
+        await User.findOneAndUpdate({ userName: req.userName }, { email: userOtpData.email });
+        await Otp.findByIdAndDelete(otpId.toString());
+        return res.success("Email changed", null, "Your Email updated");
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Plese try again later!`);
+    }
+};
 
 export const editProfileImg = async (req, res, next) => {
     const imageFile = req.file;

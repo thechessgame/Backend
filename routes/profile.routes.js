@@ -35,11 +35,17 @@ router.get(
     isAuth,
     userControler.fetchEmail);
 
-router.patch(
+router.post(
     '/email',
     isAuth,
-    validationMiddleware(schemas.blogEditEmail),
+    validationMiddleware(schemas.blogEditEmailOtprequest),
     userControler.editEmailOtpRequest);
+
+    router.patch(
+        '/email',
+        isAuth,
+        validationMiddleware(schemas.blogEditEmailConfirmOtp),
+        userControler.editEmailConfirmOtp);
 
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 

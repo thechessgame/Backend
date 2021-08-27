@@ -83,8 +83,12 @@ export const schemas = {
     blogEditName: Joi.object().keys({
         name: type.requireString
     }),
-    blogEditEmail: Joi.object().keys({
+    blogEditEmailOtprequest: Joi.object().keys({
         email: type.email
+    }),
+    blogEditEmailConfirmOtp: Joi.object().keys({
+        otpId: type.Id,
+        otp: type.otp
     }),
 
     blogquestionreply: Joi.object().keys({
@@ -120,8 +124,8 @@ export const schemas = {
     blogSendResponse: Joi.object().keys({
         userName: type.userName,
         accept: type.notRequireBoolean,
-        request: type.notRequireBoolean, 
-        drawRequest: type.notRequireBoolean, 
+        request: type.notRequireBoolean,
+        drawRequest: type.notRequireBoolean,
         pauseRequest: type.notRequireBoolean
     }),
     blogCreatedBoard: Joi.object().keys({
@@ -133,7 +137,7 @@ export const schemas = {
         position: type.requireString,
         apponent: type.userName,
     }),
-    
+
     blogSendingMail: Joi.object().keys({
         name: type.requireString,
         email: type.email,
