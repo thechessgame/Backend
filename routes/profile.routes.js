@@ -19,6 +19,11 @@ router.patch(
     uploadUserImage,
     userControler.editProfileImg);
 
+router.get(
+    '/name',
+    isAuth,
+    userControler.fetchName);
+
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 
 export default router;

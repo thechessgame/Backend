@@ -12,6 +12,16 @@ export const userProfile = async (req, res, next) => {
     }
 }
 
+export const fetchName = async (req, res, next) => {
+    const { userName } = req;
+    try {
+        const user = await User.findOne({ userName }).select("name");
+        res.success(`Name fetched`, { name: user.name }, `Name fetched`);
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Please try again later!`);
+    }
+}
+
 export const editProfileImg = async (req, res, next) => {
     const imageFile = req.file;
     const userName = req.userName;
