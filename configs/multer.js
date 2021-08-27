@@ -26,6 +26,6 @@ const fileFilter = (req, file, cb) => {
 
 export const uploadUserImage = multer({ storage, fileFilter }).single('image');
 export const deleteUserImage = (filePath) => {
-    filePath = path.join(fs.realpathSync('.'), '..', filePath);
+    filePath = path.join(fs.realpathSync('.'), '.', filePath);
     fs.unlink(filePath, err => { return err });
 };
