@@ -35,6 +35,12 @@ router.get(
     isAuth,
     userControler.fetchEmail);
 
+router.patch(
+    '/email',
+    isAuth,
+    validationMiddleware(schemas.blogEditEmail),
+    userControler.editEmailOtpRequest);
+
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 
 export default router;

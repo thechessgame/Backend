@@ -1,5 +1,12 @@
 import { User } from "../models/user.models.js";
 
+import { Otp } from "../models/otp.models.js";
+
+import { hashSync, compareSync } from "bcrypt-nodejs";
+
+import { sendMail } from "../services/mailer.js";
+import { emailHtml } from "../configs/constants.js";
+
 import { deleteUserImage } from "../configs/multer.js"
 
 export const userProfile = async (req, res, next) => {
@@ -38,6 +45,30 @@ export const fetchEmail = async (req, res, next) => {
     try {
         const user = await User.findOne({ userName }).select("email");
         res.success(`Email fetched`, { email: user.email }, `Email fetched`);
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Please try again later!`);
+    }
+}
+
+export const editEmailOtpRequest = async (req, res, next) => {
+    const { userName } = req;
+    const { email } = req.body;
+    try {
+        if (await User.findOne({ email })) {
+            return res.warning('Email already Exist', null, 'This email is not available. Please try another!');
+        }
+        const user = await User.findOne({ userName });
+        const otp = Math.floor(1000 + Math.random() * 9000);
+        let userOtpData = await Otp.findOne({ email});
+        if (userOtpData) {
+            Object.assign(userOtpData, { userName: user.userName, email, password: user.password, otp: hashSync(otp) })
+        }
+        else {
+            userOtpData = new Otp({ userName: user.userName, email, password: user.password, otp: hashSync(otp) });
+        }
+        await sendMail(email, 'OTP', emailHtml.otp(otp));
+        await userOtpData.save();
+        res.success(`mail send`, null, `OTP send on your new email!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Please try again later!`);
     }

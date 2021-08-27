@@ -83,6 +83,9 @@ export const schemas = {
     blogEditName: Joi.object().keys({
         name: type.requireString
     }),
+    blogEditEmail: Joi.object().keys({
+        email: type.email
+    }),
 
     blogquestionreply: Joi.object().keys({
         reply: type.requireString,
