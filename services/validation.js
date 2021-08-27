@@ -80,6 +80,9 @@ export const schemas = {
         otpId: type.Id
     }),
 
+    blogEditName: Joi.object().keys({
+        name: type.requireString
+    }),
 
     blogquestionreply: Joi.object().keys({
         reply: type.requireString,

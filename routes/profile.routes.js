@@ -24,6 +24,12 @@ router.get(
     isAuth,
     userControler.fetchName);
 
+router.patch(
+    '/name',
+    isAuth,
+    validationMiddleware(schemas.blogEditName),
+    userControler.editName);
+
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 
 export default router;

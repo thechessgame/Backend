@@ -22,6 +22,17 @@ export const fetchName = async (req, res, next) => {
     }
 }
 
+export const editName = async (req, res, next) => {
+    const { userName } = req;
+    const { name } = req.body;
+    try {
+        await User.findOneAndUpdate({ userName }, { name });
+        res.success(`Name updated`, { name }, `Name updated`);
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Please try again later!`);
+    }
+}
+
 export const editProfileImg = async (req, res, next) => {
     const imageFile = req.file;
     const userName = req.userName;
