@@ -122,6 +122,17 @@ export const fetchContactNumber = async (req, res, next) => {
     }
 }
 
+export const editContactNumber = async (req, res, next) => {
+    const { userName } = req;
+    const { contactNumber } = req.body;
+    try {
+        await User.findOneAndUpdate({ userName }, { contactNumber });
+        res.success(`contactNumber edited`, { contactNumber }, `contactNumber edited`);
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Please try again later!`);
+    }
+}
+
 export const deleteImg = async (req, res, next) => {
     const userName = req.userName;
     try {

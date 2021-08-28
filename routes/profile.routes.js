@@ -47,6 +47,12 @@ router.get(
     userControler.fetchContactNumber);
 
 router.patch(
+    '/contactNumber',
+    isAuth,
+    validationMiddleware(schemas.blogEditContactNumber),
+    userControler.editContactNumber);
+
+router.patch(
     '/edit/profileImg',
     isAuth,
     uploadUserImage,

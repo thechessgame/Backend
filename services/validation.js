@@ -26,9 +26,7 @@ const type = {
         .email({ minDomainSegments: 2 })
         .message("Please enter a valid email address")
         .normalize(),
-    contactNumber: Joi.string()
-        .min(10)
-        .message("Contact number must contain 10 digit🙄"),
+    contactNumber: Joi.string().regex(/^[0-9]{10}$/).messages({ 'string.pattern.base': `Phone number must have 10 digits.` }).required(),
     Id: Joi.string()
         .required()
         .custom((value, helper) => {
@@ -89,6 +87,9 @@ export const schemas = {
     blogEditEmailConfirmOtp: Joi.object().keys({
         otpId: type.Id,
         otp: type.otp
+    }),
+    blogEditContactNumber: Joi.object().keys({
+        contactNumber: type.contactNumber
     }),
 
     blogquestionreply: Joi.object().keys({
