@@ -174,42 +174,18 @@ export const deleteReply = async (req, res, next) => {
 }
 
 export const searchQandA = async (req, res, next) => {
-    const page = +req.query.page || 1;
-    const searchText = req.query.searchText;
+    const { page, searchText, dataPerPage } = req.query;
     try {
-        let questions;
-        let totalQuestions;
+        let players;
         if (!searchText) {
-            totalQuestions = await QandA.find().countDocuments();
-            questions = await QandA
-                .find()
-                .skip((page - 1) * questionsPerPage)
-                .limit(questionsPerPage)
-                .populate('creator');
+            players = await getPaginatedData(QandA, page, dataPerPage, {}, "subject question createdAt", { path: "creator", select: "imageUrl name" })
         } else {
-            totalQuestions = await QandA.find({ $text: { $search: searchText } }).countDocuments();
-            questions = await QandA
-                .find({ $text: { $search: searchText } })
-                .skip((page - 1) * questionsPerPage)
-                .limit(questionsPerPage)
-                .populate('creator');
+            players = await getPaginatedData(QandA, page, dataPerPage, { "$text": { $search: searchText } }, "subject question createdAt", { path: "creator", select: "imageUrl name" })
         }
-
+        if (!players.data) { return res.error(players.message, null, players.message) }
         const user = await User.findOne({ userName: req.userName });
-        let previousPage = page - 1;
-        let nextPage = page + 1;
-        let lastPage = Math.ceil(totalQuestions / questionsPerPage);
-        if (!previousPage > 0) { previousPage = 1 }
-        if (!nextPage >= lastPage) { nextPage = lastPage }
-        res.success(`Searching questions successfull!`, {
-            questions,
-            userId: user._id.toString(),
-            currentPage: page,
-            firstPage: 1,
-            lastPage,
-            previousPage,
-            nextPage,
-        }, `Searching questions successfull!`);
+        players.userId = user._id.toString();
+        res.success('Data fetch success', players, 'Data search successfull');
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
     }
