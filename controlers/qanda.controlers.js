@@ -8,6 +8,8 @@ export const allQuestions = async (req, res, next) => {
     try {
         const players = await getPaginatedData(QandA, page, dataPerPage, {}, "subject question createdAt", { path: "creator", select: "imageUrl name" });
         if (!players.data) { return res.error(players.message, null, players.message) }
+        const user = await User.findOne({ userName: req.userName });
+        players.userId = user._id.toString();
         res.success(`Fetching questions successfull!`, players, `Fetching questions successfull!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
