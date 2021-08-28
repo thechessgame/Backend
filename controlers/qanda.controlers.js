@@ -17,12 +17,10 @@ export const allQuestions = async (req, res, next) => {
 }
 
 export const askQuestion = async (req, res, next) => {
-    const subject = req.body.subject;
-    const question = req.body.question;
+    const { subject, question } = req.body;
     try {
         const user = await User.findOne({ userName: req.userName });
         const creator = user._id.toString();
-
         const qanda = new QandA({
             subject, question, creator
         })
@@ -62,17 +60,13 @@ export const editQuestion = async (req, res, next) => {
 }
 
 export const deleteQuestion = async (req, res, next) => {
-    const questionId = req.params.questionId;
+    const { questionId } = req.params;
     try {
-        const qanda = await QandA.findById(questionId);
-        if (!qanda) {
-            return res.warning(`Invalid Id!`, null, `We are not find any question with this Id!`);
-        }
         const user = await User.findOne({ userName: req.userName });
-        if (qanda.creator.toString() !== user._id.toString()) {
+        const qanda = await QandA.findOneAndRemove({ _id: questionId, creator: user._id.toString() });
+        if (!qanda) {
             return res.warning(`Not a Creator!`, null, `Not a Creator!`);
         }
-        await QandA.findByIdAndRemove(questionId);
         return res.success(`Question deleted!`, null, `Question deleted!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
@@ -80,9 +74,11 @@ export const deleteQuestion = async (req, res, next) => {
 }
 
 export const singleQuestion = async (req, res, next) => {
-    const questionId = req.params.questionId;
+    const { questionId } = req.params;
     try {
-        const question = await QandA.findById(questionId).populate('replies.creator').populate('creator');
+        const question = await QandA.findById(questionId)
+            .populate([{ path: "replies.creator", select: "imageUrl name" }, { path: "creator", select: "imageUrl name" }])
+            .select("subject question createdAt replies.createdAt replies._id replies.answer");
         if (!question) {
             return res.warning(`Invalid Id!`, null, `This reply doesn't exist any more!`);
         }
@@ -94,9 +90,7 @@ export const singleQuestion = async (req, res, next) => {
 }
 
 export const addReply = async (req, res, next) => {
-    const questionId = req.body.questionId;
-    const reply = req.body.reply;
-
+    const { questionId, reply } = req.body;
     try {
         let question = await QandA.findById(questionId.toString());
         if (!question) {
@@ -108,7 +102,9 @@ export const addReply = async (req, res, next) => {
             creator: user._id.toString()
         })
         await question.save();
-        question = await QandA.findById(questionId.toString()).populate('creator').populate('replies.creator');
+        question = await QandA.findById(questionId)
+            .populate([{ path: "replies.creator", select: "imageUrl name" }, { path: "creator", select: "imageUrl name" }])
+            .select("subject question createdAt replies.createdAt replies._id replies.answer");
         res.created(`Reply saved!`, { userId: user._id.toString(), question }, `Reply accepted!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
@@ -116,7 +112,7 @@ export const addReply = async (req, res, next) => {
 }
 
 export const renderEditReply = async (req, res, next) => {
-    const replyId = req.params.replyId;
+    const { replyId } = req.params;
     try {
         const question = await QandA.findOne({ 'replies._id': replyId })
         if (!question) {
@@ -130,9 +126,7 @@ export const renderEditReply = async (req, res, next) => {
 }
 
 export const editReply = async (req, res, next) => {
-    const replyId = req.body.replyId;
-    const reply = req.body.reply;
-
+    const { replyId, reply } = req.body;
     try {
         let question = await QandA.findOne({ 'replies._id': replyId });
         if (!question) {
@@ -146,7 +140,9 @@ export const editReply = async (req, res, next) => {
         const index = question.replies.findIndex(reply => reply._id.toString() === replyId.toString());
         question.replies[index].answer = reply;
         await question.save();
-        question = await QandA.findOne({ 'replies._id': replyId }).populate('creator').populate('replies.creator');
+        question = await QandA.findOne({ 'replies._id': replyId })
+            .populate([{ path: "replies.creator", select: "imageUrl name" }, { path: "creator", select: "imageUrl name" }])
+            .select("subject question createdAt replies.createdAt replies._id replies.answer");
         res.success(`Reply edited!`, { question, userId: user._id.toString() }, `Reply edited!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
@@ -154,7 +150,7 @@ export const editReply = async (req, res, next) => {
 }
 
 export const deleteReply = async (req, res, next) => {
-    const replyId = req.params.replyId;
+    const { replyId } = req.params;
 
     try {
         let question = await QandA.findOne({ 'replies._id': replyId })
@@ -168,7 +164,9 @@ export const deleteReply = async (req, res, next) => {
         }
         question.replies.pull(data._id.toString());
         await question.save();
-        question = await QandA.findById(question._id).populate('creator').populate('replies.creator');
+        question = await QandA.findOne({ 'replies._id': replyId })
+            .populate([{ path: "replies.creator", select: "imageUrl name" }, { path: "creator", select: "imageUrl name" }])
+            .select("subject question createdAt replies.createdAt replies._id replies.answer");
         res.success(`Reply deleted!`, { userId: user._id.toString(), question }, `Reply deleted!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
