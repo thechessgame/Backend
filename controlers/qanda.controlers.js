@@ -1,36 +1,14 @@
 import { QandA } from "../models/qanda.models.js";
 import { User } from "../models/user.models.js";
-const questionsPerPage = 5;
+
+import { getPaginatedData } from "../services/pagination.js";
 
 export const allQuestions = async (req, res, next) => {
-    const page = +req.query.page || 1;
+    const { page, dataPerPage } = req.query;
     try {
-        const totalQuestions = await QandA.find().countDocuments();
-
-        const questions = await QandA
-            .find()
-            .skip((page - 1) * questionsPerPage)
-            .limit(questionsPerPage)
-            .populate('creator');
-
-        const user = await User.findOne({ userName: req.userName });
-        let previousPage = page - 1;
-        let nextPage = page + 1;
-        let lastPage = Math.ceil(totalQuestions / questionsPerPage);
-        if (!previousPage > 0) { previousPage = 1 }
-        if (!nextPage >= lastPage) { nextPage = lastPage }
-        res.success(`Fetching questions successfull!`,
-            {
-                message: '',
-                questions,
-                userId: user._id.toString(),
-                currentPage: page,
-                firstPage: 1,
-                lastPage,
-                previousPage,
-                nextPage
-            },
-            `Fetching questions successfull!`);
+        const players = await getPaginatedData(QandA, page, dataPerPage, {}, "subject question createdAt", { path: "creator", select: "imageUrl name" });
+        if (!players.data) { return res.error(players.message, null, players.message) }
+        res.success(`Fetching questions successfull!`, players, `Fetching questions successfull!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
     }

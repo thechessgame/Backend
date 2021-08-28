@@ -11,8 +11,8 @@ export const getPaginatedData = async (Modal, page, dataPerPage, query, select =
             .find(query)
             .skip((page - 1) * dataPerPage)
             .limit(dataPerPage)
-            .select(select)
             .populate(populate)
+            .select(select)
 
         const previousPage = page - 1 ? page - 1 : null;
         const lastPage = Math.ceil(totalCounts / dataPerPage);
