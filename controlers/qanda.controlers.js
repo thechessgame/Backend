@@ -34,16 +34,13 @@ export const askQuestion = async (req, res, next) => {
 }
 
 export const renderEditQuestion = async (req, res, next) => {
-    const questionId = req.params.questionId;
+    const { questionId } = req.params;
     try {
-        const qanda = await QandA.findById(questionId);
+        const qanda = await QandA.findById(questionId).select("subject question");
         if (!qanda) {
             return res.warning(`Invalid Id!`, null, `We are not find any question with this Id!`);
         }
-        res.created(`Fetched question successfully!`, {
-            subject: qanda.subject,
-            question: qanda.question
-        }, `Fetched question successfully!`);
+        res.created(`Fetched question successfully!`, qanda, `Fetched question successfully!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
     }
