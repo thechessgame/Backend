@@ -33,7 +33,7 @@ router.post('/ask',
     validationMiddleware(schemas.blogaskquestion),
     QandAControler.askQuestion);
 
-router.put('/editQuestion',
+router.put('/editquestion',
     isAuth,
     validationMiddleware(schemas.blogeditquestion),
     QandAControler.editQuestion);

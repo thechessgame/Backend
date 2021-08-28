@@ -31,7 +31,7 @@ const type = {
         .required()
         .custom((value, helper) => {
             if (mongoose.Types.ObjectId.isValid(value)) { return true }
-            else { return helper.message("Need a valid userId") }
+            else { return helper.message("Need a valid Id") }
         }),
     requireString: Joi.string().required(),
     notRequireString: Joi.string(),
@@ -106,7 +106,8 @@ export const schemas = {
     }),
     blogeditquestion: Joi.object().keys({
         subject: type.requireString,
-        question: type.requireString
+        question: type.requireString,
+        questionId: type.Id
     }),
     blogQuestionId: Joi.object().keys({
         questionId: type.Id

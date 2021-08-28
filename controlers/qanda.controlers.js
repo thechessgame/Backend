@@ -50,19 +50,14 @@ export const renderEditQuestion = async (req, res, next) => {
 }
 
 export const editQuestion = async (req, res, next) => {
-    const subject = req.body.subject;
-    const question = req.body.question;
-    const questionId = req.body.questionId;
+    const { subject, question, questionId } = req.body;
 
     try {
-        const qanda = await QandA.findById(questionId);
         const user = await User.findOne({ userName: req.userName });
-        if (qanda.creator.toString() !== user._id.toString()) {
+        const qanda = await QandA.findOneAndUpdate({ _id: questionId, creator: user._id.toString() }, { subject, question });
+        if (!qanda) {
             return res.warning(`Not a Creator!`, null, `Not a Creator!`);
         }
-        qanda.subject = subject;
-        qanda.question = question;
-        await qanda.save();
         return res.success(`Question edited successfully!`, null, `Question edited successfully!`);
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
