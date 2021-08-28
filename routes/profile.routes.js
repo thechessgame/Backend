@@ -13,12 +13,6 @@ import { uploadUserImage } from "../configs/multer.js";
 
 router.get('/', isAuth, userControler.userProfile);
 
-router.patch(
-    '/edit/profileImg',
-    isAuth,
-    uploadUserImage,
-    userControler.editProfileImg);
-
 router.get(
     '/name',
     isAuth,
@@ -41,11 +35,22 @@ router.post(
     validationMiddleware(schemas.blogEditEmailOtprequest),
     userControler.editEmailOtpRequest);
 
-    router.patch(
-        '/email',
-        isAuth,
-        validationMiddleware(schemas.blogEditEmailConfirmOtp),
-        userControler.editEmailConfirmOtp);
+router.patch(
+    '/email',
+    isAuth,
+    validationMiddleware(schemas.blogEditEmailConfirmOtp),
+    userControler.editEmailConfirmOtp);
+
+router.get(
+    '/contactNumber',
+    isAuth,
+    userControler.fetchContactNumber);
+
+router.patch(
+    '/edit/profileImg',
+    isAuth,
+    uploadUserImage,
+    userControler.editProfileImg);
 
 router.delete('/deleteImage', isAuth, userControler.deleteImg);
 

@@ -112,6 +112,16 @@ export const editProfileImg = async (req, res, next) => {
     }
 }
 
+export const fetchContactNumber = async (req, res, next) => {
+    const { userName } = req;
+    try {
+        const user = await User.findOne({ userName }).select("contactNumber");
+        res.success(`contactNumber fetched`, { contactNumber: user.contactNumber }, `contactNumber fetched`);
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Please try again later!`);
+    }
+}
+
 export const deleteImg = async (req, res, next) => {
     const userName = req.userName;
     try {
