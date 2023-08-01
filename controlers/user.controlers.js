@@ -9,20 +9,60 @@ import { hashSync, compareSync } from "bcrypt-nodejs";
 
 import { sendMail } from "../services/mailer.js";
 
+// sendPasswordResetEmail
+// while login with firebase
+export const createUser = async (req, res, next) => {
+    const { userName, email } = req.body;
+    try {
+        const user = await User.findOne({
+            $or: [{ userName }, { email }]
+        });
+        if (user) {
+            return res.warning(`User already exist!`, null, `User already exist!`);
+        }
+
+        const newUser = new User({ email: email, userName: userName });
+        await newUser.save();
+
+        return res.created("Signup successfully", newUser, "You have been successfully signup");
+
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Plese try again later!`);
+    }
+};
+
+
+export const getUser = async (req, res, next) => {
+    const { email } = req.body;
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.success(`User doesn't exist!`, null, `User doesn't exist!`);
+        }
+
+        return res.created("Login successfully", user, "You have been successfully Login");
+    } catch (err) {
+        return res.error(err, null, `Something went wrong, Plese try again later!`);
+    }
+};
+
+
 export const checkUserName = async (req, res, next) => {
     const { userName } = req.query;
     try {
         const user = await User.findOne({ userName });
         if (!user) {
-            return res.success(`UserName doesn't exist!`, null, `UserName already exist!`);
+            return res.success(`UserName doesn't exist!`, true, `UserName doesn't exist!`);
         } else {
-            return res.warning(`UserName already exist!`, null, `UserName already exist!`);
+            return res.warning(`UserName already exist!`, false, `UserName already exist!`);
         }
     } catch (err) {
         return res.error(err, null, `Something went wrong, Plese try again later!`);
     }
 };
 
+
+// while login without firebase
 export const otpRequest = async (req, res, next) => {
     const { userName, email, password } = req.body;
     try {

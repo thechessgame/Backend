@@ -15,10 +15,6 @@ const userSchema = new Schema(
             type: String,
             required: true
         },
-        password: {
-            type: String,
-            required: true
-        },
         imageUrl: {
             type: String,
             default: 'images/blank-profile.png'

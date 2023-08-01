@@ -3,7 +3,7 @@ import { Board } from "../models/play.models.js";
 
 import { getPaginatedData } from "../services/pagination.js";
 
-import { io } from "../socket.js";
+// import { io } from "../socket.js";
 
 export const getUserName = async (req, res, next) => {
     try {
@@ -44,7 +44,7 @@ export const sendRequest = async (req, res, next) => {
     const { userName } = req.body;
     try {
         const requester = await User.findOne({ userName: req.userName })
-        io.getIO().emit(userName, { request: true, userName: requester.userName, name: requester.name });
+        // io.getIO().emit(userName, { request: true, userName: requester.userName, name: requester.name });
         res.success('Request Send!', null, 'Request Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -55,9 +55,9 @@ export const sendResponse = async (req, res, next) => {
     const { userName, accept, request, drawRequest, pauseRequest } = req.body;
     try {
         const requester = await User.findOne({ userName: req.userName })
-        if (request) { io.getIO().emit(userName, { response: true, accept, userName: requester.userName, name: requester.name }) }
-        if (drawRequest) { io.getIO().emit(userName, { drawresponse: true }) }
-        if (pauseRequest) { io.getIO().emit(userName, { pauseresponse: true }) }
+        // if (request) { io.getIO().emit(userName, { response: true, accept, userName: requester.userName, name: requester.name }) }
+        // if (drawRequest) { io.getIO().emit(userName, { drawresponse: true }) }
+        // if (pauseRequest) { io.getIO().emit(userName, { pauseresponse: true }) }
         res.success('Response Send!', { accept }, 'Response Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -113,10 +113,10 @@ export const createBoard = async (req, res, next) => {
         await board.save();
         await user1.save();
         await user2.save();
-        io.getIO().emit(player_1, { boardCreated: true, player: 'w', apponent: player_2 });
-        io.getIO().emit(player_2, { boardCreated: true, player: 'b', apponent: player_1 });
-        io.getIO().emit(player_1, { renderProfile: true, user: user1, apponent: user2 });
-        io.getIO().emit(player_2, { renderProfile: true, user: user2, apponent: user1 });
+        // io.getIO().emit(player_1, { boardCreated: true, player: 'w', apponent: player_2 });
+        // io.getIO().emit(player_2, { boardCreated: true, player: 'b', apponent: player_1 });
+        // io.getIO().emit(player_1, { renderProfile: true, user: user1, apponent: user2 });
+        // io.getIO().emit(player_2, { renderProfile: true, user: user2, apponent: user1 });
         res.created('Board created Successfully!', null, 'Board created Successfully!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -127,7 +127,7 @@ export const boardData = async (req, res, next) => {
     const { piece, position, apponent } = req.body;
     try {
         console.log(piece, position, apponent);
-        io.getIO().emit(apponent, { changeData: true, piece, position });
+        // io.getIO().emit(apponent, { changeData: true, piece, position });
         res.success('Data send Successfully!', null, 'Data send Successfully!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -137,7 +137,7 @@ export const boardData = async (req, res, next) => {
 export const sendExitRequest = async (req, res, next) => {
     const { userName } = req.body;
     try {
-        io.getIO().emit(userName, { exitRequest: true })
+        // io.getIO().emit(userName, { exitRequest: true })
         res.success('Request Send!', null, 'Request Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -148,7 +148,7 @@ export const sendDrawRequest = async (req, res, next) => {
     const { userName } = req.body;
     try {
         const user = await User.findOne({ userName: req.userName })
-        io.getIO().emit(userName, { drawRequest: true, user })
+        // io.getIO().emit(userName, { drawRequest: true, user })
         res.success('Request Send!', null, 'Request Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -159,7 +159,7 @@ export const sendPauseRequest = async (req, res, next) => {
     const { userName } = req.body;
     try {
         const user = await User.findOne({ userName: req.userName })
-        io.getIO().emit(userName, { pauseRequest: true, user })
+        // io.getIO().emit(userName, { pauseRequest: true, user })
         res.success('Request Send!', null, 'Request Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)
@@ -170,7 +170,7 @@ export const saveBoardData = async (req, res, next) => {
     const { userName } = req.body;
     try {
         const user = await User.findOne({ userName: req.userName })
-        io.getIO().emit(userName, { pauseRequest: true, user })
+        // io.getIO().emit(userName, { pauseRequest: true, user })
         res.success('Request Send!', null, 'Request Send!');
     } catch (err) {
         return res.error(err, null, `Something went wrong!<br>Plz try again later...`)

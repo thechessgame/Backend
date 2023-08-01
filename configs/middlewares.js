@@ -6,6 +6,14 @@ import express from "express";
 import chalk from 'chalk';
 
 import { Response } from "../models/response.model.js";
+import admin from 'firebase-admin'
+import { firebaseServiceAccountConstants, firebaseConstants } from "./constants.js";
+
+admin.initializeApp({
+    credential: admin.credential.cert(firebaseServiceAccountConstants),
+    databaseURL: firebaseConstants.FIREBASE_RT_DATABASE_URL,
+    storageBucket: firebaseConstants.FIREBASE_BUCKET_NAME,
+});
 
 export default app => {
     app.use(bodyParser.json());

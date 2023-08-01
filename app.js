@@ -11,7 +11,6 @@ import middlewaresConfig, { responseMiddleware, requestError } from './configs/m
 
 import { constants } from "./configs/constants.js";
 
-import { io } from "./socket.js";
 
 import event from "events";
 event.EventEmitter.defaultMaxListeners = 50;
@@ -32,11 +31,7 @@ responseMiddleware(app);
 const server = app.listen(constants.PORT, async () => {
     try {
         await mongoose.connect(constants.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true });
-        io.init(server).on('connection', socket => {
-            console.log('Client connected');
-            socket.on('disconnect', () => {
-            })
-        });
+        console.log("****Connected to database successfully*****")
     } catch (error) {
         console.log(error)
     }
