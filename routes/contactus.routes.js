@@ -9,8 +9,7 @@ import { isAuth } from "../middleware/is-auth.js";
 import { validationMiddleware } from "../middleware/validation.js";
 import { schemas } from "../services/validation.js";
 
-router.post('', 
-    isAuth,
+router.post('',
     validationMiddleware(schemas.blogSendingMail),
     contactUsControler.postMail);
 
